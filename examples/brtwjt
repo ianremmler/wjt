@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# adjust brightness using wjt and http://haikarainen.github.io/light/
+
+initlvl="$(light)"
+
+wjt -p "brightness:" -t -x "$initlvl" | while read lvl; do
+	light -S "$lvl"
+done

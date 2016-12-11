@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# adjust volume using wjt and amixer
+
+initvol="$(amixer get Master | tr -d '[]%' | awk '/Left: Playback/ { print $5 }')"
+
+wjt -p "volume:" -z m -t -x "$initvol" | while read vol; do
+	case "$vol" in
+		m)
+			amixer -q set Master toggle
+			;;
+		*)
+			amixer -q set Master "$vol%"
+			;;
+	esac
+done
