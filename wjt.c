@@ -61,7 +61,8 @@ quit(void)
 {
 	size_t i;
 
-	XUngrabKey(dpy, AnyKey, AnyModifier, root);
+	XUngrabKeyboard(dpy, CurrentTime);
+	XUngrabPointer(dpy, CurrentTime);
 	for (i = 0; i < SchemeLast; i++)
 		free(scheme[i]);
 	drw_free(drw);
@@ -115,21 +116,31 @@ grabfocus(void)
 }
 
 static void
-grabkeyboard(void)
+grabinput(void)
 {
 	struct timespec ts = { .tv_sec = 0, .tv_nsec = 1000000 };
 	int i;
 
 	if (embed)
 		return;
-	/* try to grab keyboard, we may have to wait for another process to ungrab */
+	/* try to grab keyboard and pointer, we may have to wait for another process to ungrab */
 	for (i = 0; i < 1000; i++) {
 		if (XGrabKeyboard(dpy, DefaultRootWindow(dpy), True, GrabModeAsync,
 		                  GrabModeAsync, CurrentTime) == GrabSuccess)
+			break;
+		nanosleep(&ts, NULL);
+	}
+	if (i == 1000) {
+		die("cannot grab keyboard");
+	}
+	for (i = 0; i < 1000; i++) {
+		if (XGrabPointer(dpy, DefaultRootWindow(dpy), True,
+		    ButtonPressMask | ButtonReleaseMask | Button1MotionMask,
+		    GrabModeAsync, GrabModeAsync, None, None, CurrentTime) == GrabSuccess)
 			return;
 		nanosleep(&ts, NULL);
 	}
-	die("cannot grab keyboard");
+	die("cannot grab pointer");
 }
 
 static int
@@ -601,7 +612,7 @@ main(int argc, char *argv[])
 	if (jump <= step)
 		die("jump must not be less than step");
 
-	grabkeyboard();
+	grabinput();
 	setup();
 	run();
 
