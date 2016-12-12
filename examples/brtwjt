@@ -4,6 +4,6 @@
 
 initlvl="$(light)"
 
-wjt -p "brightness:" -t -x "$initlvl" | while read lvl; do
+wjt -p "brightness:" -t -x "$initlvl" "$@" | while read lvl; do
 	light -S "$lvl"
 done
