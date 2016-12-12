@@ -34,6 +34,7 @@ enum { SchemePrompt, SchemeSlider, SchemeValue, SchemeLast }; /* color schemes *
 
 static char *embed;
 static int sw, sh;
+static int winx;
 static int sx = 0;
 static int promptw = 0;
 static int lrpad; /* sum of left and right padding */
@@ -308,7 +309,7 @@ buttonpress(XEvent *e)
 	XButtonReleasedEvent *ev = &e->xbutton;
 	switch (ev->button) {
 	case Button1:
-		xtoval(ev->x);
+		xtoval(ev->x_root - winx);
 		if (track)
 			printval();
 		break;
@@ -330,7 +331,7 @@ buttonrelease(XEvent *e)
 	XButtonReleasedEvent *ev = &e->xbutton;
 	switch (ev->button) {
 	case Button1:
-		xtoval(ev->x);
+		xtoval(ev->x_root - winx);
 		if (!track)
 			printval();
 		break;
@@ -349,7 +350,7 @@ static void
 buttonmove(XEvent *e)
 {
 	XMotionEvent *ev = &e->xmotion;
-	if (xtoval(ev->x) && track)
+	if (xtoval(ev->x_root - winx) && track)
 		printval();
 	drawslider();
 }
@@ -453,6 +454,7 @@ setup(void)
 		y = topbar ? 0 : wa.height - sh;
 		sw = wa.width;
 	}
+	winx = x;
 
 	if (prompt && *prompt) {
 		promptw = TEXTW(prompt);
