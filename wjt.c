@@ -135,8 +135,8 @@ grabinput(void)
 	}
 	for (i = 0; i < 1000; i++) {
 		if (XGrabPointer(dpy, DefaultRootWindow(dpy), True,
-		    ButtonPressMask | ButtonReleaseMask | Button1MotionMask,
-		    GrabModeAsync, GrabModeAsync, None, None, CurrentTime) == GrabSuccess)
+		                 ButtonPressMask | ButtonReleaseMask | Button1MotionMask,
+		                 GrabModeAsync, GrabModeAsync, None, None, CurrentTime) == GrabSuccess)
 			return;
 		nanosleep(&ts, NULL);
 	}
@@ -420,7 +420,7 @@ setup(void)
 		if (mon >= 0 && mon < n)
 			i = mon;
 		else if (w != root && w != PointerRoot && w != None) {
-			/* find top-Evel window containing current input focus */
+			/* find top-level window containing current input focus */
 			do {
 				if (XQueryTree(dpy, (pw = w), &dw, &w, &dws, &du) && dws)
 					XFree(dws);
