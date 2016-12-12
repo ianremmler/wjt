@@ -57,7 +57,7 @@ static Clr *scheme[SchemeLast];
 #include "config.h"
 
 static void
-quit()
+quit(void)
 {
 	size_t i;
 
@@ -152,13 +152,13 @@ adjustval(int v, int force)
 }
 
 static void
-printval()
+printval(void)
 {
 	puts(valstr);
 	fflush(stdout);
 }
 
-void
+static void
 updateval(int v)
 {
 	if (adjustval(v, 0) && track)
@@ -180,7 +180,7 @@ xtoval(int x)
 }
 
 static void
-printspecial()
+printspecial(void)
 {
 	if (special && *special) {
 		puts(special);
