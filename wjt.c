@@ -120,27 +120,28 @@ static void
 grabinput(void)
 {
 	struct timespec ts = { .tv_sec = 0, .tv_nsec = 1000000 };
+	int ownkbd = 0;
+	int ownptr = 0;
 	int i;
 
 	if (embed)
 		return;
 	/* try to grab keyboard and pointer, we may have to wait for another process to ungrab */
 	for (i = 0; i < 1000; i++) {
-		if (XGrabKeyboard(dpy, DefaultRootWindow(dpy), True, GrabModeAsync,
-		                  GrabModeAsync, CurrentTime) == GrabSuccess)
-			break;
-		nanosleep(&ts, NULL);
-	}
-	if (i == 1000) {
-		die("cannot grab keyboard");
-	}
-	for (i = 0; i < 1000; i++) {
-		if (XGrabPointer(dpy, DefaultRootWindow(dpy), True,
-		                 ButtonPressMask | ButtonReleaseMask | Button1MotionMask,
-		                 GrabModeAsync, GrabModeAsync, None, None, CurrentTime) == GrabSuccess)
+		if (!ownkbd)
+			ownkbd = (XGrabKeyboard(dpy, DefaultRootWindow(dpy), True, GrabModeAsync,
+			                        GrabModeAsync, CurrentTime) == GrabSuccess);
+		if (!ownptr)
+			ownptr = (XGrabPointer(dpy, DefaultRootWindow(dpy), True,
+			                       ButtonPressMask | ButtonReleaseMask | Button1MotionMask,
+			                       GrabModeAsync, GrabModeAsync, None, None,
+			                       CurrentTime) == GrabSuccess);
+		if (ownkbd && ownptr)
 			return;
 		nanosleep(&ts, NULL);
 	}
+	if (!ownkbd)
+		die("cannot grab keyboard");
 	die("cannot grab pointer");
 }
 
