@@ -559,9 +559,9 @@ main(int argc, char *argv[])
 		else if (!strcmp(argv[i], "-sf")) /* slider foreground color */
 			colors[SchemeSlider][ColFg] = argv[++i];
 		else if (!strcmp(argv[i], "-vb")) /* value background color */
-			colors[SchemePrompt][ColBg] = argv[++i];
+			colors[SchemeValue][ColBg] = argv[++i];
 		else if (!strcmp(argv[i], "-vf")) /* value foreground color */
-			colors[SchemePrompt][ColFg] = argv[++i];
+			colors[SchemeValue][ColFg] = argv[++i];
 		else if (!strcmp(argv[i], "-w")) /* embedding window id */
 			embed = argv[++i];
 		else if (!strcmp(argv[i], "-l")) { /* lower bound */
