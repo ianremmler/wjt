@@ -7,6 +7,7 @@ wjt \- slider widget
 .RB [ \-b ]
 .RB [ \-lv ]
 .RB [ \-le ]
+.RB [ \-t ]
 .RB [ \-f
 .IR font ]
 .RB [ \-m
@@ -15,13 +16,13 @@ wjt \- slider widget
 .IR winid ]
 .RB [ \-p
 .IR prompt ]
-.RB [ \-sb
-.IR color ]
-.RB [ \-sf
-.IR color ]
 .RB [ \-pb
 .IR color ]
 .RB [ \-pf
+.IR color ]
+.RB [ \-sb
+.IR color ]
+.RB [ \-sf
 .IR color ]
 .RB [ \-vb
 .IR color ]
@@ -64,6 +65,9 @@ Disable drawing a label for the slider value.
 .B \-t
 Emit the slider value while dragging the slider.
 .TP
+.BI \-f " font"
+Specify the font or font set to use.
+.TP
 .BI \-m " monnum"
 Display wjt on monitor number monnum. Monitor numbers start at 0.
 .TP
@@ -72,9 +76,6 @@ Embed wjt into the window with id winid.
 .TP
 .BI \-p " prompt"
 Specify a prompt to be displayed to the left of the slider.
-.TP
-.BI \-f " font"
-Specify the font or font set to use.
 .TP
 .BI \-pb " color"
 Specify the prompt background color.
