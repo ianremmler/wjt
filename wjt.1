@@ -1,0 +1,179 @@
+.TH WJT 1 wjt\-VERSION
+.SH NAME
+wjt \- slider widget
+.SH SYNOPSIS
+.B wjt
+.RB [ \-v ]
+.RB [ \-b ]
+.RB [ \-lv ]
+.RB [ \-le ]
+.RB [ \-f
+.IR font ]
+.RB [ \-m
+.IR monnum ]
+.RB [ \-w
+.IR winid ]
+.RB [ \-p
+.IR prompt ]
+.RB [ \-sb
+.IR color ]
+.RB [ \-sf
+.IR color ]
+.RB [ \-pb
+.IR color ]
+.RB [ \-pf
+.IR color ]
+.RB [ \-vb
+.IR color ]
+.RB [ \-vf
+.IR color ]
+.RB [ \-l
+.IR lower ]
+.RB [ \-u
+.IR upper ]
+.RB [ \-s
+.IR step ]
+.RB [ \-j
+.IR jump ]
+.RB [ \-x
+.IR value ]
+.RB [ \-z
+.IR special ]
+.P
+.SH DESCRIPTION
+.B wjt
+is a slider widget for X. It allows the user to interactively select a number
+from within a given range. The selected value is printed to stdout, which can be
+read and used by other processes. wjt can be controlled by keyboard or mouse.
+wjt was inspired by, and its code based on, dmenu.
+
+.P
+.SH OPTIONS
+.TP
+.B \-v
+Print version information to stdout and exit.
+.TP
+.B \-b
+Display wjt at the bottom of the display.
+.TP
+.B \-le
+Disable drawing labels for the slider extents.
+.TP
+.B \-lv
+Disable drawing a label for the slider value.
+.TP
+.B \-t
+Emit the slider value while dragging the slider.
+.TP
+.BI \-m " monnum"
+Display wjt on monitor number monnum. Monitor numbers start at 0.
+.TP
+.BI \-w " winid"
+Embed wjt into the window with id winid.
+.TP
+.BI \-p " prompt"
+Specify a prompt to be displayed to the left of the slider.
+.TP
+.BI \-f " font"
+Specify the font or font set to use.
+.TP
+.BI \-pb " color"
+Specify the prompt background color.
+.IR #RGB ,
+.IR #RRGGBB ,
+and X color names are supported.
+.TP
+.BI \-pf " color"
+Specify the prompt foreground color.
+.TP
+.BI \-sb " color"
+Specify the color of the slider beyond the slider value.
+.TP
+.BI \-sf " color"
+Specify the extent label color.
+.TP
+.BI \-vb " color"
+Specify the color of the slider up to the slider value.
+.TP
+.BI \-vf " color"
+Specify the slider value label color.
+.TP
+.BI \-l " lower"
+Specify the lower bound of the slider.
+.TP
+.BI \-u " upper"
+Specify the upper bound of the slider.
+.TP
+.BI \-s " step"
+Specify the size of a small change in the slider value.
+.TP
+.BI \-j " jump"
+Specify the size of a large change in the slider value.
+.TP
+.BI \-x " value"
+Specify the initial value of the slider.
+.TP
+.BI \-z " special"
+Specify special text to emit when the user presses Tab or clicks the middle
+mouse button.
+.SH MOUSE CONTROLS
+.TP
+.B Left click
+Set and emit the slider value.
+.TP
+.B Left drag
+Adjust the slider value, and if tracking is enabled, emit it while dragging.
+.TP
+.B Middle click
+Emit special text if specified.
+.TP
+.B ScrollUp
+Increase the slider value one step.
+.TP
+.B ScrollDown
+Decrease the slider value one step.
+.TP
+.B C-ScrollUp
+Increase the slider value one jump.
+.TP
+.B C-ScrollDown
+Decrease the slider value one jump.
+.TP
+.B Right click
+Exit.
+.SH KEYBOARD CONTROLS
+.TP
+.B ` 1 2 3 4 5 6 7 8 9 0
+Map to 10% increments through the slider range: ` to 0%, 1 to 10%, ..., 9 to 90%, 0 to 100%.
+.TP
+.B Home C\-a g
+Set the slider value to the lower bound.
+.TP
+.B End C\-e G
+Set the slider value to the upper bound.
+.TP
+.B Left C\-b h -
+Decrease the slider value one step.
+.TP
+.B Right C\-f l + =
+Increase the slider value one step.
+.TP
+.B PageDown Down C\-p j
+Decrease the slider value one jump.
+.TP
+.B PageUp Up C\-n k
+Increase the slider value one jump.
+.TP
+.B Space
+Emit the slider value.
+.TP
+.B Tab
+Emit special text if specified.
+.TP
+.B Enter C\-m C\-j
+Emit the slider value and exit.
+.TP
+.B Escape C\-[ C\-c
+Exit.
+.SH SEE ALSO
+.BR dmenu (1)
