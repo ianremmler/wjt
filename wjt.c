@@ -47,6 +47,7 @@ static int minw;
 static int maxw;
 static int valw;
 static int valx;
+static int valout;
 
 static Display *dpy;
 static Window root, parentwin, win;
@@ -58,7 +59,7 @@ static Clr *scheme[SchemeLast];
 #include "config.h"
 
 static void
-quit(void)
+quit(int status)
 {
 	size_t i;
 
@@ -69,7 +70,7 @@ quit(void)
 	drw_free(drw);
 	XSync(dpy, False);
 	XCloseDisplay(dpy);
-	exit(0);
+	exit(status);
 }
 
 static float
@@ -145,40 +146,39 @@ grabinput(void)
 	die("cannot grab pointer");
 }
 
-static int
+static void
 adjustval(int v, int force)
 {
-	int update;
-
 	if (v < min)
 		v = min;
 	else if (v > max)
 		v = max;
 	valx = (int)lerp(0, sw - 1 - sx, min, max, v);
-	update = (force || v != val);
-	if (update) {
+	if (force || v != val) {
 		val = v;
 		snprintf(valstr, VBUFSIZE, "%d", val);
 		valw = TEXTW(valstr);
 	}
-	return update;
 }
 
 static void
-printval(void)
+printval(int force)
 {
-	puts(valstr);
-	fflush(stdout);
+	if (force || val != valout) {
+		valout = val;
+		puts(valstr);
+		fflush(stdout);
+	}
 }
 
 static void
 updateval(int v)
 {
-	if (adjustval(v, 0) && track)
-		printval();
+	adjustval(v, 0);
+	printval(0);
 }
 
-static int
+static void
 xtoval(int x)
 {
 	float fv;
@@ -189,7 +189,7 @@ xtoval(int x)
 	if (v > min && v < max) {
 		v = (int)(fv / step + copysignf(0.5, fv)) * step;
 	}
-	return adjustval(v, 0);
+	updateval(v);
 }
 
 static void
@@ -246,17 +246,13 @@ keypress(XKeyEvent *ev)
 
 	switch(ksym) {
 	case XK_space:
-		printval();
-		break;
-	case XK_Tab:
 		printspecial();
 		break;
 	case XK_KP_Enter:
 	case XK_Return:
-		printval();
-		quit();
+		quit(0);
 	case XK_Escape:
-		quit();
+		quit(1);
 	case XK_h:
 	case XK_minus:
 	case XK_Left:
@@ -307,12 +303,10 @@ keypress(XKeyEvent *ev)
 static void
 buttonpress(XEvent *e)
 {
-	XButtonReleasedEvent *ev = &e->xbutton;
+	XButtonPressedEvent *ev = &e->xbutton;
 	switch (ev->button) {
 	case Button1:
 		xtoval(ev->x_root - winx);
-		if (track)
-			printval();
 		break;
 	case Button4:
 		updateval(val + (ev->state & ControlMask ? jump : step));
@@ -333,14 +327,13 @@ buttonrelease(XEvent *e)
 	switch (ev->button) {
 	case Button1:
 		xtoval(ev->x_root - winx);
-		if (!track)
-			printval();
 		break;
 	case Button2:
 		printspecial();
 		return;
 	case Button3:
-		quit();
+		printval(1);
+		quit(0);
 	default:
 		return;
 	}
@@ -351,8 +344,7 @@ static void
 buttonmove(XEvent *e)
 {
 	XMotionEvent *ev = &e->xmotion;
-	if (xtoval(ev->x_root - winx) && track)
-		printval();
+	xtoval(ev->x_root - winx);
 	drawslider();
 }
 
@@ -489,6 +481,7 @@ setup(void)
 	drw_resize(drw, sw, sh);
 
 	adjustval(val, 1);
+	valout = val;
 	snprintf(minstr, VBUFSIZE, "%d", min);
 	snprintf(maxstr, VBUFSIZE, "%d", max);
 	minw = TEXTW(minstr);
@@ -500,9 +493,10 @@ setup(void)
 static void
 usage(void)
 {
-	fputs("usage: wjt [-v] [-b] [-lv] [-le] [-t] [-f font] [-m monnum] [-w winid] [-p prompt]\n"
-	      "           [-pb color] [-pf color] [-sb color] [-sf color] [-vb color] [-vf color]\n"
-	      "           [-l lower] [-u upper] [-s step] [-j jump] [-x value] [-z special]\n", stderr);
+	fputs("usage: wjt [-v] [-b] [-lv] [-le] [-m monnum] [-w winid] [-p prompt]\n"
+	      "           [-f font] [-pb color] [-pf color] [-sb color] [-sf color]\n"
+	      "           [-vb color] [-vf color] [-l lower] [-u upper] [-s step]\n"
+	      "           [-j jump] [-x value] [-z special]\n", stderr);
 	exit(1);
 }
 
@@ -514,10 +508,7 @@ valarg(char *arg, int *ok)
 
 	x = strtol(arg, &p, 0);
 	if (ok) {
-		if (p == arg || labs(x) > MAXVAL)
-			*ok = 0;
-		else
-			*ok = 1;
+		*ok = (p != arg && labs(x) <= MAXVAL);
 	}
 	return x;
 }
@@ -536,8 +527,6 @@ main(int argc, char *argv[])
 			exit(0);
 		} else if (!strcmp(argv[i], "-b")) /* invert bar vertical screen location */
 			topbar = !topbar;
-		else if (!strcmp(argv[i], "-t")) /* invert whether to print value during mouse drag */
-			track = !track;
 		else if (!strcmp(argv[i], "-lv")) /* invert whether to display value label */
 			labelval = !labelval;
 		else if (!strcmp(argv[i], "-le")) /* invert whether to display extent labels */
@@ -547,6 +536,8 @@ main(int argc, char *argv[])
 		/* these options take one argument */
 		else if (!strcmp(argv[i], "-m")) /* monitor number */
 			mon = atoi(argv[++i]);
+		else if (!strcmp(argv[i], "-w")) /* embedding window id */
+			embed = argv[++i];
 		else if (!strcmp(argv[i], "-p")) /* adds prompt to left of slider */
 			prompt = argv[++i];
 		else if (!strcmp(argv[i], "-f")) /* font or font set */
@@ -563,29 +554,26 @@ main(int argc, char *argv[])
 			colors[SchemeValue][ColBg] = argv[++i];
 		else if (!strcmp(argv[i], "-vf")) /* value foreground color */
 			colors[SchemeValue][ColFg] = argv[++i];
-		else if (!strcmp(argv[i], "-w")) /* embedding window id */
-			embed = argv[++i];
 		else if (!strcmp(argv[i], "-l")) { /* lower bound */
 			min = valarg(argv[++i], &ok);
 			if (!ok)
-				/* die("lower bound must be a reasonable number"); */
 				die("lower bound"VERROR);
 		} else if (!strcmp(argv[i], "-u")) { /* upper bound */
 			max = valarg(argv[++i], &ok);
 			if (!ok)
 				die("upper bound"VERROR);
-		} else if (!strcmp(argv[i], "-x")) { /* initial value */
-			val = valarg(argv[++i], &ok);
-			if (!ok)
-				die("initial value"VERROR);
-		} else if (!strcmp(argv[i], "-s")) { /* step */
-			step = valarg(argv[++i], &ok);
-			if (!ok)
-				die("step"VERROR);
 		} else if (!strcmp(argv[i], "-j")) { /* jump */
 			jump = valarg(argv[++i], &ok);
 			if (!ok)
 				die("jump"VERROR);
+		} else if (!strcmp(argv[i], "-s")) { /* step */
+			step = valarg(argv[++i], &ok);
+			if (!ok)
+				die("step"VERROR);
+		} else if (!strcmp(argv[i], "-x")) { /* initial value */
+			val = valarg(argv[++i], &ok);
+			if (!ok)
+				die("initial value"VERROR);
 		} else if (!strcmp(argv[i], "-z")) /* special text */
 			special = argv[++i];
 		else

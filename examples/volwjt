@@ -4,7 +4,7 @@
 
 initvol="$(amixer get Master | tr -d '[]%' | awk '/Left: Playback/ { print $5 }')"
 
-wjt -p "volume:" -z m -t -x "$initvol" "$@" | while read vol; do
+wjt -p "volume:" -z m -x "$initvol" "$@" | while read vol; do
 	case "$vol" in
 		m)
 			amixer -q set Master toggle

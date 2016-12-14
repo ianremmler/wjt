@@ -7,15 +7,14 @@ wjt \- slider widget
 .RB [ \-b ]
 .RB [ \-lv ]
 .RB [ \-le ]
-.RB [ \-t ]
-.RB [ \-f
-.IR font ]
 .RB [ \-m
 .IR monnum ]
 .RB [ \-w
 .IR winid ]
 .RB [ \-p
 .IR prompt ]
+.RB [ \-f
+.IR font ]
 .RB [ \-pb
 .IR color ]
 .RB [ \-pf
@@ -62,12 +61,6 @@ Disable drawing labels for the slider extents.
 .B \-lv
 Disable drawing a label for the slider value.
 .TP
-.B \-t
-Emit the slider value while dragging the slider.
-.TP
-.BI \-f " font"
-Specify the font or font set to use.
-.TP
 .BI \-m " monnum"
 Display wjt on monitor number monnum. Monitor numbers start at 0.
 .TP
@@ -76,6 +69,9 @@ Embed wjt into the window with id winid.
 .TP
 .BI \-p " prompt"
 Specify a prompt to be displayed to the left of the slider.
+.TP
+.BI \-f " font"
+Specify the font or font set to use.
 .TP
 .BI \-pb " color"
 Specify the prompt background color.
@@ -114,15 +110,12 @@ Specify the size of a large change in the slider value.
 Specify the initial value of the slider.
 .TP
 .BI \-z " special"
-Specify special text to emit when the user presses Tab or clicks the middle
+Specify special text to emit when the user presses Space or clicks the middle
 mouse button.
 .SH MOUSE CONTROLS
 .TP
-.B Left click
-Set and emit the slider value.
-.TP
-.B Left drag
-Adjust the slider value, and if tracking is enabled, emit it while dragging.
+.B Left click or drag
+Adjust the slider value.
 .TP
 .B Middle click
 Emit special text if specified.
@@ -140,7 +133,7 @@ Increase the slider value one jump.
 Decrease the slider value one jump.
 .TP
 .B Right click
-Exit.
+Exit with status 0.
 .SH KEYBOARD CONTROLS
 .TP
 .B ` 1 2 3 4 5 6 7 8 9 0
@@ -165,15 +158,12 @@ Decrease the slider value one jump.
 Increase the slider value one jump.
 .TP
 .B Space
-Emit the slider value.
-.TP
-.B Tab
 Emit special text if specified.
 .TP
 .B Enter C\-m C\-j
-Emit the slider value and exit.
+Exit with status 0.
 .TP
 .B Escape C\-[ C\-c
-Exit.
+Exit with status 1.
 .SH SEE ALSO
 .BR dmenu (1)
