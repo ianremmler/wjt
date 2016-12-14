@@ -4,7 +4,7 @@
 static int topbar           = 1;    /* -b:  whether bar is at top or bottom of screen */
 static int min              = 0;    /* -l:  lower bound */
 static int max              = 100;  /* -u:  upper bound */
-static int val              = 0;    /* -x:  initial value */
+static int initval          = 0;    /* -x:  initial value */
 static int labelval         = 1;    /* -lv: whether to display value label */
 static int labelexts        = 1;    /* -le: whether to display extent labels */
 static int step             = 1;    /* -s:  minimum adjustment */

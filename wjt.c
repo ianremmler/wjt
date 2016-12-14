@@ -48,6 +48,7 @@ static int maxw;
 static int valw;
 static int valx;
 static int valout;
+static int val = MAXVAL + 1;
 
 static Display *dpy;
 static Window root, parentwin, win;
@@ -147,14 +148,14 @@ grabinput(void)
 }
 
 static void
-adjustval(int v, int force)
+adjustval(int v)
 {
 	if (v < min)
 		v = min;
 	else if (v > max)
 		v = max;
 	valx = (int)lerp(0, sw - 1 - sx, min, max, v);
-	if (force || v != val) {
+	if (v != val) {
 		val = v;
 		snprintf(valstr, VBUFSIZE, "%d", val);
 		valw = TEXTW(valstr);
@@ -162,20 +163,14 @@ adjustval(int v, int force)
 }
 
 static void
-printval(int force)
+updateval(int v)
 {
-	if (force || val != valout) {
+	adjustval(v);
+	if (val != valout) {
 		valout = val;
 		puts(valstr);
 		fflush(stdout);
 	}
-}
-
-static void
-updateval(int v)
-{
-	adjustval(v, 0);
-	printval(0);
 }
 
 static void
@@ -332,7 +327,6 @@ buttonrelease(XEvent *e)
 		printspecial();
 		return;
 	case Button3:
-		printval(1);
 		quit(0);
 	default:
 		return;
@@ -480,8 +474,7 @@ setup(void)
 	}
 	drw_resize(drw, sw, sh);
 
-	adjustval(val, 1);
-	valout = val;
+	adjustval(initval);
 	snprintf(minstr, VBUFSIZE, "%d", min);
 	snprintf(maxstr, VBUFSIZE, "%d", max);
 	minw = TEXTW(minstr);
@@ -571,7 +564,7 @@ main(int argc, char *argv[])
 			if (!ok)
 				die("step"VERROR);
 		} else if (!strcmp(argv[i], "-x")) { /* initial value */
-			val = valarg(argv[++i], &ok);
+			initval = valarg(argv[++i], &ok);
 			if (!ok)
 				die("initial value"VERROR);
 		} else if (!strcmp(argv[i], "-z")) /* special text */
