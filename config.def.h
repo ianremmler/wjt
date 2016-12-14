@@ -9,7 +9,6 @@ static int labelval         = 1;    /* -lv: whether to display value label */
 static int labelexts        = 1;    /* -le: whether to display extent labels */
 static int step             = 1;    /* -s:  minimum adjustment */
 static int jump             = 10;   /* -j:  large adjustment */
-static int track            = 0;    /* -t:  whether to print value during mouse drag */
 static const char *prompt   = NULL; /* -p:  prompt to the left of slider */
 static const char *special  = NULL; /* -z:  special text */
 static const char *fonts[]  = {     /* -f:  font set */
