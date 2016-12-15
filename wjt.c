@@ -296,9 +296,8 @@ keypress(XKeyEvent *ev)
 }
 
 static void
-buttonpress(XEvent *e)
+buttonpress(XButtonPressedEvent *ev)
 {
-	XButtonPressedEvent *ev = &e->xbutton;
 	switch (ev->button) {
 	case Button1:
 		xtoval(ev->x_root - winx);
@@ -316,9 +315,8 @@ buttonpress(XEvent *e)
 }
 
 static void
-buttonrelease(XEvent *e)
+buttonrelease(XButtonReleasedEvent *ev)
 {
-	XButtonReleasedEvent *ev = &e->xbutton;
 	switch (ev->button) {
 	case Button1:
 		xtoval(ev->x_root - winx);
@@ -335,9 +333,8 @@ buttonrelease(XEvent *e)
 }
 
 static void
-buttonmove(XEvent *e)
+buttonmove(XMotionEvent *ev)
 {
-	XMotionEvent *ev = &e->xmotion;
 	xtoval(ev->x_root - winx);
 	drawslider();
 }
@@ -364,13 +361,13 @@ run(void)
 			keypress(&ev.xkey);
 			break;
 		case ButtonPress:
-			buttonpress(&ev);
+			buttonpress(&ev.xbutton);
 			break;
 		case ButtonRelease:
-			buttonrelease(&ev);
+			buttonrelease(&ev.xbutton);
 			break;
 		case MotionNotify:
-			buttonmove(&ev);
+			buttonmove(&ev.xmotion);
 			break;
 		case VisibilityNotify:
 			if (ev.xvisibility.state != VisibilityUnobscured)
