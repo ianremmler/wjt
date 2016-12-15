@@ -42,10 +42,15 @@ wjt \- slider widget
 .P
 .SH DESCRIPTION
 .B wjt
-is a slider widget for X. It allows the user to interactively select a number
-from within a given range. The selected value is printed to stdout, which can be
-read and used by other processes. wjt can be controlled by keyboard or mouse.
-wjt was inspired by, and its code based on, dmenu.
+is a slider widget for the X Window System that allows the user to select
+values within a range using the keyboard or mouse. It presents a bar at the
+top or bottom of the display with a slider area including legend labels, and
+optionally, a prompt on the left. When the user adjusts the slider position,
+its value is printed to stdout. wjt grabs keyboard and mouse input while
+running.
+.P
+wjt was inspired by, and its code is based on,
+.BR dmenu (1).
 .P
 .SH OPTIONS
 .TP
