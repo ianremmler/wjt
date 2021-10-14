@@ -571,6 +571,7 @@ main(int argc, char *argv[])
 				die("step"VERROR);
 		} else if (!strcmp(argv[i], "-x")) { /* initial value */
 			initval = valarg(argv[++i], &ok);
+			valout = initval;
 			if (!ok)
 				die("initial value"VERROR);
 		} else if (!strcmp(argv[i], "-z")) /* special text */
