@@ -480,6 +480,7 @@ setup(void)
 	}
 	drw_resize(drw, sw, sh);
 
+	valout = initval;
 	adjustval(initval);
 	snprintf(minstr, VBUFSIZE, "%d", min);
 	snprintf(maxstr, VBUFSIZE, "%d", max);
